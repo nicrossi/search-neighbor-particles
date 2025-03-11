@@ -2,6 +2,8 @@ import math
 from collections import OrderedDict
 from typing import List, Set, Dict
 
+from requests.packages import target
+
 
 class CIM:
     def __init__(self, context):
@@ -16,7 +18,6 @@ class CIM:
         particles_grid = self.populate_grid()
         result = OrderedDict((i, set()) for i in range(len(self.particles)))
 
-        # TODO implement periodic boundaries "
         if self.periodic:
             self.cim_periodic_boundaries(result, particles_grid)
         else:
@@ -61,6 +62,7 @@ class CIM:
         return grid
 
     def cim_fixed_boundaries(self, result: Dict[int, Set[int]], grid: List[List[Set[int]]]):
+        """ Cell Index Method with fixed boundaries """
         for particle_idx, particle in enumerate(self.particles):
             i, j = self.calculate_cell_idx(particle.y), self.calculate_cell_idx(particle.x)
             neighbor_list = result[particle_idx]
@@ -74,21 +76,21 @@ class CIM:
                              result: Dict[int, Set[int]]):
         """ Checks and processes neighboring cells for a given particle in a grid. """
         # Check the current cell
-        self.find_neighbor_cells(grid[row][col], particle_idx, neighbors, result)
+        self.find_neighbors_cell(grid[row][col], particle_idx, neighbors, result)
         # Check the upper cell
         if row > 0:
-            self.find_neighbor_cells(grid[row - 1][col], particle_idx, neighbors, result)
+            self.find_neighbors_cell(grid[row - 1][col], particle_idx, neighbors, result)
         # Check the lower cell
         if row < self.m - 1:
-            self.find_neighbor_cells(grid[row + 1][col], particle_idx, neighbors, result)
+            self.find_neighbors_cell(grid[row + 1][col], particle_idx, neighbors, result)
         # Check the right cell
         if col < self.m - 1:
-            self.find_neighbor_cells(grid[row][col + 1], particle_idx, neighbors, result)
+            self.find_neighbors_cell(grid[row][col + 1], particle_idx, neighbors, result)
         # Check the diagonal lower-right cell
         if row < self.m - 1 and col < self.m - 1:
-            self.find_neighbor_cells(grid[row + 1][col + 1], particle_idx, neighbors, result)
+            self.find_neighbors_cell(grid[row + 1][col + 1], particle_idx, neighbors, result)
 
-    def find_neighbor_cells(self,
+    def find_neighbors_cell(self,
                             cell_particles: Set[int],
                             target_idx: int,
                             neighbors: Set[int],
@@ -113,5 +115,112 @@ class CIM:
                 result[idx].add(target_idx)
 
     def cim_periodic_boundaries(self, result, particles_grid):
-        pass
-        # TODO implement
+        """ Cell Index Method with periodic boundaries """
+        for particle_idx, current_particle in enumerate(self.particles):
+            i_matrix = self.calculate_cell_idx(current_particle.y)
+            j_matrix = self.calculate_cell_idx(current_particle.x)
+
+            neighbors = result.setdefault(particle_idx, set())
+
+            self.find_neighbors_cell(particles_grid[i_matrix][j_matrix], particle_idx, neighbors, result)
+
+            if i_matrix > 0:
+                self.find_neighbors_cell(particles_grid[i_matrix - 1][j_matrix], particle_idx, neighbors, result)
+            else:
+                self.find_neighbors_cell_periodic_downwards(particles_grid[self.m - 1][j_matrix], particle_idx,
+                                                            neighbors, result)
+
+            if i_matrix < self.m - 1:
+                self.find_neighbors_cell(particles_grid[i_matrix + 1][j_matrix], particle_idx, neighbors, result)
+            else:
+                self.find_neighbors_cell_periodic_vertical(particles_grid[0][j_matrix], particle_idx, neighbors,
+                                                           result)
+
+            if j_matrix < self.m - 1:
+                self.find_neighbors_cell(particles_grid[i_matrix][j_matrix + 1], particle_idx, neighbors, result)
+            else:
+                self.find_neighbors_cell_periodic_horizontal(particles_grid[i_matrix][0], particle_idx,
+                                                             neighbors, result)
+
+            if i_matrix < self.m - 1 and j_matrix < self.m - 1:
+                self.find_neighbors_cell(particles_grid[i_matrix + 1][j_matrix + 1], particle_idx, neighbors,
+                                         result)
+            else:
+                self.find_neighbors_cell_periodic_diagonal(particles_grid[0][0], particle_idx, neighbors, result)
+
+
+    ## Distances, and neighbor search with periodic boundaries
+    def compute_periodic_distance_downwards(self, target_idx, other_idx):
+        # Note we're moving the position of the target particle to the next row of the grid
+        target_p = self.particles[target_idx]
+        other_p = self.particles[other_idx]
+        l = self.l
+
+        return math.sqrt((target_p.x - other_p.x) ** 2 + (target_p.y + l - other_p.y) ** 2)
+
+    def compute_periodic_distance_vertical(self, target_idx, other_idx):
+        # Note we're moving the position of the other particle to the next row of the grid
+        target_p = self.particles[target_idx]
+        other_p = self.particles[other_idx]
+        l = self.l
+
+        return math.sqrt((target_p.x - other_p.x) ** 2 + (target_p.y - (other_p.y + l)) ** 2)
+
+    def compute_periodic_distance_horizontal(self, target_idx, other_idx):
+        # Note we're moving the position of the other particle to the next col of the grid
+        target_p = self.particles[target_idx]
+        other_p = self.particles[other_idx]
+        l = self.l
+
+        return math.sqrt((target_p.x - (other_p.x + l)) ** 2 + (target_p.y - other_p.y) ** 2)
+
+    def compute_periodic_distance_diagonal(self, target_idx, other_idx):
+        # Note we're moving the position of the other particle to the next row and col of the grid
+        target_p = self.particles[target_idx]
+        other_p = self.particles[other_idx]
+        l = self.l
+
+        return math.sqrt((target_p.x - (other_p.x + l)) ** 2 + (target_p.y - (other_p.y + l)) ** 2)
+
+    def is_within_interaction_range(self, distance, radius):
+        return (distance - radius <= self.rc) or (distance + radius <= self.rc)
+
+    def find_neighbors_cell_periodic_horizontal(self, cell_particles, target_idx, neighbors, result):
+        target_particle = self.particles[target_idx]
+        for idx in cell_particles:
+            distance = self.compute_periodic_distance_horizontal(target_idx, idx)
+            if target_idx != idx and self.is_within_interaction_range(distance, target_particle.radius):
+                neighbors.add(idx)
+                if idx not in result:
+                    result[idx] = set()
+                result[idx].add(target_idx)
+
+    def find_neighbors_cell_periodic_vertical(self, cell_particles, target_idx, neighbors, result):
+        target_particle = self.particles[target_idx]
+        for cell_particle_idx in cell_particles:
+            distance = self.compute_periodic_distance_vertical(target_idx, cell_particle_idx)
+            if target_idx != cell_particle_idx and self.is_within_interaction_range(distance, target_particle.radius):
+                neighbors.add(cell_particle_idx)
+                if cell_particle_idx not in result:
+                    result[cell_particle_idx] = set()
+                result[cell_particle_idx].add(target_idx)
+
+    def find_neighbors_cell_periodic_diagonal(self, cell_particles, target_idx, neighbors, result):
+        target_particle = self.particles[target_idx]
+        for idx in cell_particles:
+            distance = self.compute_periodic_distance_diagonal(target_idx, idx)
+            if target_idx != idx and self.is_within_interaction_range(distance, target_particle.radius):
+                neighbors.add(idx)
+                if idx not in result:
+                    result[idx] = set()
+                result[idx].add(target_idx)
+
+    def find_neighbors_cell_periodic_downwards(self, cell_particles, target_idx, neighbors, result):
+        target_particle = self.particles[target_idx]
+        for idx in cell_particles:
+            distance = self.compute_periodic_distance_downwards(target_idx, idx)
+            if target_idx != idx and self.is_within_interaction_range(distance, target_particle.radius):
+                neighbors.add(idx)
+                if idx not in result:
+                    result[idx] = set()
+                result[idx].add(target_idx)
