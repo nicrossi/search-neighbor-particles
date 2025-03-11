@@ -24,8 +24,8 @@ def generate_dynamic_input(filename, N, L, t0=0.0):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate particle input files.")
-    parser.add_argument("N", type=int, help="Number of particles")
-    parser.add_argument("L", type=float, help="Side length of the simulation area")
+    parser.add_argument("--N", type=int, help="Number of particles")
+    parser.add_argument("--L", type=float, help="Side length of the simulation area")
     parser.add_argument("--radius", type=float, default=None, help="Radius of the particles (optional)")
     parser.add_argument("--min_radius", type=float, default=0.0, help="Minimum radius of the particles (optional)")
     parser.add_argument("--max_radius", type=float, default=0.5, help="Maximum radius of the particles (optional)")
