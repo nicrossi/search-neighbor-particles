@@ -49,3 +49,10 @@ def parse_input_files(static_file, dynamic_file):
         'matrix_side_length': matrix_side_length,
         'particles': particle_objects
     }
+
+def write_output(execution_time, neighbors, output_file):
+    """ Writes the output to a file. """
+    with open(output_file, 'w') as f:
+        f.write(f"{execution_time:.3f}\n")
+        for particle, neighbors in neighbors.items():
+            f.write(f"{particle}\t{', '.join(map(str, neighbors))}\n")

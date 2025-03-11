@@ -1,7 +1,7 @@
 import sys
 import time
 
-from ioUtils import parse_arguments, validate_arguments, parse_input_files
+from ioUtils import parse_arguments, validate_arguments, parse_input_files, write_output
 from src.CIM import CIM
 
 
@@ -13,10 +13,10 @@ def main(args):
     neighbors = cim.search_neighbor_particles()
     end_time = time.time()
 
-    duration = end_time - start_time
-    print(f"Execution time: {duration:.3f} seconds")
+    execution_time = end_time - start_time
+    print(f"Execution time: {execution_time:.3f} seconds")
 
-    # TODO implement write output to file
+    write_output(execution_time, neighbors, context['output_file'])
 
 
 def generate_context(args):

@@ -1,5 +1,5 @@
 import math
-from collections import defaultdict
+from collections import OrderedDict
 from typing import List, Set, Dict
 
 
@@ -14,7 +14,7 @@ class CIM:
     def search_neighbor_particles(self) -> Dict[int, Set[int]]:
         """ Compute the neighbors of each particle using the Cell Index Method """
         particles_grid = self.populate_grid()
-        result = defaultdict(set)
+        result = OrderedDict((i, set()) for i in range(len(self.particles)))
 
         # TODO implement periodic boundaries "
         if self.periodic:
