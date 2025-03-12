@@ -1,6 +1,7 @@
 import sys
 import time
 
+from brute_force import BruteForce
 from ioUtils import parse_arguments, validate_arguments, parse_input_files, write_output
 from CIM import CIM
 
@@ -8,9 +9,13 @@ from CIM import CIM
 def main(args):
     context = generate_context(args)
     cim = CIM(context)
+    bf = BruteForce(context)
 
     start_time = time.time()
-    neighbors = cim.search_neighbor_particles()
+    if context['brute_force']:
+        neighbors = bf.brute_force_method()
+    else:
+        neighbors = cim.search_neighbor_particles()
     end_time = time.time()
 
     execution_time = end_time - start_time
