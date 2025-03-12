@@ -8,7 +8,7 @@ generate_random_input.py [-h] [--radius RADIUS] [--min_radius MIN_RADIUS] [--max
 
 #### Example of usage with fixed radius
 ```
-python generate_random_input.py --N 100 --L 5 --radiun 0.2 
+python generate_random_input.py --N 100 --L 5 --radius 0.2 
 ```
 
 #### Example of usage with min and max radius
