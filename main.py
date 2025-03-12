@@ -2,7 +2,7 @@ import sys
 import time
 
 from ioUtils import parse_arguments, validate_arguments, parse_input_files, write_output
-from src.CIM import CIM
+from CIM import CIM
 
 
 def main(args):

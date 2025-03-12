@@ -15,3 +15,8 @@ python generate_random_input.py --N 100 --L 5 --radiun 0.2
 ```
 python generate_random_input.py --N 100 --L 5 --min_radius 0.1 --max_radius 0.2
 ```
+
+## Cell Index Method - Search neighbor particles
+#### Usage
+```
+````

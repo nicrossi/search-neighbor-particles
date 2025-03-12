@@ -2,9 +2,6 @@ import math
 from collections import OrderedDict
 from typing import List, Set, Dict
 
-from requests.packages import target
-
-
 class CIM:
     def __init__(self, context):
         self.l = context['matrix_side_length']
