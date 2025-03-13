@@ -50,5 +50,5 @@ options:
 ````
 Example of usage: 
 ```
-python main.py --static_file particles_static.txt --dynamic_file particles_dynamic.txt --rc=1 --m=5 --brute_force False --periodic_boundaries False
+python main.py --static_file particles_static.txt --dynamic_file particles_dynamic.txt --rc 1 --m 5 --brute_force False --periodic_boundaries False
 ```
