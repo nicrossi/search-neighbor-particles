@@ -185,7 +185,7 @@ class CIM:
         return math.sqrt((target_p.x - (other_p.x + l)) ** 2 + (target_p.y - (other_p.y + l)) ** 2)
 
     def is_within_interaction_range(self, distance, radius):
-        return (distance - radius <= self.rc) or (distance + radius <= self.rc)
+        return distance <= self.rc + 2 * radius
 
     def find_neighbors_cell_periodic_horizontal(self, cell_particles, target_idx, neighbors, result):
         target_particle = self.particles[target_idx]

@@ -42,26 +42,26 @@ class BruteForce:
             periodic_particles = []
 
             if self.periodic:  # TODO: check whether square is a box from 0 to L
-                if self.l - particles[p_1][0] <= radius_interaction + max_radius:
+                if self.l - particles[p_1][0] <= radius_interaction + 2 * max_radius:
                     periodic_particles.append((particles[p_1][0] - self.l, particles[p_1][1]))
 
-                    if self.l - particles[p_1][1] <= radius_interaction + max_radius:
+                    if self.l - particles[p_1][1] <= radius_interaction + 2 * max_radius:
                         periodic_particles.append((particles[p_1][0] - self.l, particles[p_1][1] - self.l))
-                    if particles[p_1][1] <= radius_interaction + max_radius:
+                    if particles[p_1][1] <= 2 * radius_interaction + max_radius:
                         periodic_particles.append((particles[p_1][0] - self.l, particles[p_1][1] + self.l))
 
-                if self.l - particles[p_1][1] <= radius_interaction + max_radius:
+                if self.l - particles[p_1][1] <= radius_interaction + 2 * max_radius:
                     periodic_particles.append((particles[p_1][0], particles[p_1][1] - self.l))
 
-                if particles[p_1][0] <= radius_interaction + max_radius:
+                if particles[p_1][0] <= radius_interaction + 2 * max_radius:
                     periodic_particles.append((particles[p_1][0] + self.l, particles[p_1][1]))
 
-                    if self.l - particles[p_1][1] <= radius_interaction + max_radius:
+                    if self.l - particles[p_1][1] <= radius_interaction + 2 * max_radius:
                         periodic_particles.append((particles[p_1][0] + self.l, particles[p_1][1] - self.l))
-                    if particles[p_1][1] <= radius_interaction + max_radius:
+                    if particles[p_1][1] <= radius_interaction + 2 * max_radius:
                         periodic_particles.append((particles[p_1][0] + self.l, particles[p_1][1] + self.l))
 
-                if particles[p_1][1] <= radius_interaction + max_radius:
+                if particles[p_1][1] <= radius_interaction + 2 * max_radius:
                     periodic_particles.append((particles[p_1][0], particles[p_1][1] + self.l))
 
             for p_2 in range(number_particles):
