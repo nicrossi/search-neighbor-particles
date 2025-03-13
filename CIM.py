@@ -60,6 +60,11 @@ class CIM:
 
     def cim_fixed_boundaries(self, result: Dict[int, Set[int]], grid: List[List[Set[int]]]):
         """ Cell Index Method with fixed boundaries """
+        # For debugging smaller group of particles #
+        # for idx, particle in enumerate(self.particles):
+        #     i, j = self.calculate_cell_idx(particle.y), self.calculate_cell_idx(particle.x)
+        #     print(f'P(id:{idx}, x:{particle.x}, y:{particle.y}) --> C(i:{i}, j:{j})')
+        ####
         for particle_idx, particle in enumerate(self.particles):
             i, j = self.calculate_cell_idx(particle.y), self.calculate_cell_idx(particle.x)
             neighbor_list = result[particle_idx]
@@ -107,7 +112,7 @@ class CIM:
             distance = target_particle.distance_to(self.particles[idx])
 
             # Check if within interaction range
-            if distance <= self.rc + target_particle.radius:
+            if distance <= self.rc + (2 * target_particle.radius):
                 neighbors.add(idx)
                 result[idx].add(target_idx)
 

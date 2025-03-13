@@ -10,8 +10,8 @@ def parse_arguments(cli_args):
     parser.add_argument("--output_file", type=str, help="Path to the output file", default="out1.txt")
     parser.add_argument("--rc", type=float, help="Interaction radius for the Cell Index Method")
     parser.add_argument("--m", type=int, help="Grid dimension for the Cell Index Method", default=0)
-    parser.add_argument("--periodic_boundaries", type=bool, help="Boolean flag. Whether to use periodic boundaries", default=False)
-    parser.add_argument("--brute_force", type=bool, help="Boolean flag. Whether to use Brute-Force to find neighbors", default=False)
+    parser.add_argument('--periodic_boundaries', type=lambda x: (str(x).lower() == 'true'), required=True, help='Use periodic boundaries')
+    parser.add_argument('--brute_force', type=lambda x: (str(x).lower() == 'true'), required=True, help='Use brute force method')
 
     return parser.parse_args(cli_args)
 
@@ -53,6 +53,6 @@ def parse_input_files(static_file, dynamic_file):
 def write_output(execution_time, neighbors, output_file):
     """ Writes the output to a file. """
     with open(output_file, 'w') as f:
-        f.write(f"{execution_time:.3f}\n")
+        f.write(f"{execution_time:.6f}\n")
         for particle, neighbors in neighbors.items():
             f.write(f"{particle}\t{', '.join(map(str, neighbors))}\n")
