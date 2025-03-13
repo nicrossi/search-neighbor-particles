@@ -14,7 +14,7 @@ def main(args):
     end_time = time.time()
 
     execution_time = end_time - start_time
-    print(f"Execution time: {execution_time:.3f} seconds")
+    print(f"Execution time: {execution_time:.6f} seconds")
 
     write_output(execution_time, neighbors, context['output_file'])
 
