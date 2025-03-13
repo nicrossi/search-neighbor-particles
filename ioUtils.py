@@ -7,7 +7,7 @@ def parse_arguments(cli_args):
     parser = argparse.ArgumentParser(description="Cell Index Method Simulation")
     parser.add_argument("--static_file", type=str, help="Path to the static input file")
     parser.add_argument("--dynamic_file", type=str, help="Path to the dynamic input file")
-    parser.add_argument("--output_file", type=str, help="Path to the output file", default="out1.txt")
+    parser.add_argument("--output_file", type=str, help="Path to the output file", default="out.txt")
     parser.add_argument("--rc", type=float, help="Interaction radius for the Cell Index Method")
     parser.add_argument("--m", type=int, help="Grid dimension for the Cell Index Method", default=0)
     parser.add_argument('--periodic_boundaries', type=lambda x: (str(x).lower() == 'true'), required=True, help='Use periodic boundaries')
