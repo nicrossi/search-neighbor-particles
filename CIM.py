@@ -110,6 +110,7 @@ class CIM:
             if target_idx == idx: continue  # Skip self-comparison
 
             distance = target_particle.distance_to(self.particles[idx])
+            #print(f'P({target_idx})->P({idx}) :distance={distance}, rc_i={self.rc + (2 * target_particle.radius)}')
 
             # Check if within interaction range
             if distance <= self.rc + (2 * target_particle.radius):
